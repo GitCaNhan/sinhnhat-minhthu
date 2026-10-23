@@ -770,6 +770,8 @@
         margin: 4px auto 10px;
         cursor: pointer;
         touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        perspective: 1000px;
       }
 
       /* Polaroid Card Base */
@@ -790,6 +792,11 @@
         user-select: none;
         -webkit-user-select: none;
         touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform-style: preserve-3d;
       }
 
       .polaroid-card:hover {
@@ -1803,17 +1810,56 @@
             const tilt = card.style.getPropertyValue('--tilt') || '0deg';
             const tx = card.style.getPropertyValue('--tx') || '0px';
             const ty = card.style.getPropertyValue('--ty') || '0px';
-            card.style.transform = `translate(${tx}, ${ty}) rotate(${tilt}) scale(1)`;
+            card.style.transform = `translate3d(${tx}, ${ty}, 0) rotate(${tilt}) scale(1)`;
           }, index * 80);
         });
+
+        // Thiết lập thao tác vuốt cảm ứng mượt mà trên điện thoại
+        setupPhotoStackSwipe();
 
         setTimeout(() => {
           spawnHearts();
         }, photoDeck.length * 80 + 200);
       }
 
-      // Lật ảnh tiếp theo trong chồng ảnh mượt mà, chính xác
-      function cycleNextPhoto(e) {
+      // Hỗ trợ thao tác vuốt (swipe) mượt mà trên điện thoại
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchStartTime = 0;
+
+      function setupPhotoStackSwipe() {
+        const stackArea = document.getElementById('photoStackArea');
+        if (!stackArea || stackArea.dataset.swipeBound === 'true') return;
+        stackArea.dataset.swipeBound = 'true';
+
+        stackArea.addEventListener('touchstart', (e) => {
+          if (e.touches && e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartTime = Date.now();
+          }
+        }, { passive: true });
+
+        stackArea.addEventListener('touchend', (e) => {
+          if (!touchStartX || !touchStartY) return;
+          const touchEndX = e.changedTouches[0].clientX;
+          const touchEndY = e.changedTouches[0].clientY;
+          const dx = touchEndX - touchStartX;
+          const dy = touchEndY - touchStartY;
+          const dt = Date.now() - touchStartTime;
+
+          // Nếu vuốt ngang dứt khoát trên 28px và nhanh (<400ms)
+          if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.1 && dt < 400) {
+            const dir = dx > 0 ? 1 : -1;
+            cycleNextPhoto(e, dir);
+          }
+          touchStartX = 0;
+          touchStartY = 0;
+        }, { passive: true });
+      }
+
+      // Lật ảnh tiếp theo trong chồng ảnh mượt mà, tối ưu trên cả điện thoại & máy tính
+      function cycleNextPhoto(e, customDir) {
         if (e) {
           e.stopPropagation();
           if (e.preventDefault) e.preventDefault();
@@ -1837,13 +1883,16 @@
         isCyclingPhoto = true;
         const topCard = photoDeck[0];
 
-        // Trượt nhẹ sang một bên
-        const slideX = Math.random() > 0.5 ? 130 : -130;
-        const slideRot = slideX > 0 ? 16 : -16;
+        // Tối ưu cự ly trượt: trên mobile trượt vừa vặn (85px), desktop trượt (120px)
+        const isMobile = window.innerWidth <= 600;
+        const dir = typeof customDir === 'number' ? customDir : (Math.random() > 0.5 ? 1 : -1);
+        const slideX = dir * (isMobile ? 85 : 120);
+        const slideRot = dir * (isMobile ? 12 : 15);
 
-        topCard.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease';
-        topCard.style.transform = `translate(${slideX}px, -25px) rotate(${slideRot}deg) scale(0.96)`;
-        topCard.style.opacity = '0.65';
+        // Giai đoạn 1: Trượt êm sang bên và xoay nhẹ (translate3d kích hoạt GPU)
+        topCard.style.transition = 'transform 0.28s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.22s ease';
+        topCard.style.transform = `translate3d(${slideX}px, -18px, 0) rotate(${slideRot}deg) scale(0.96)`;
+        topCard.style.opacity = '0.75';
 
         spawnMiniSparkle(topCard);
 
@@ -1858,8 +1907,10 @@
           const tilt = cycledCard.style.getPropertyValue('--tilt') || '0deg';
           const tx = cycledCard.style.getPropertyValue('--tx') || '0px';
           const ty = cycledCard.style.getPropertyValue('--ty') || '0px';
-          cycledCard.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.28s ease';
-          cycledCard.style.transform = `translate(${tx}, ${ty}) rotate(${tilt}) scale(1)`;
+
+          // Giai đoạn 2: Lướt nhẹ từ phía sau vào đúng vị trí xếp chồng
+          cycledCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease';
+          cycledCard.style.transform = `translate3d(${tx}, ${ty}, 0) rotate(${tilt}) scale(1)`;
           cycledCard.style.opacity = '1';
 
           // Kiểm tra thẻ ảnh mới trên cùng: nếu là sinh_nhat_19 thì chạy hiệu ứng update & in ảnh
@@ -1867,8 +1918,8 @@
 
           setTimeout(() => {
             isCyclingPhoto = false;
-          }, 200);
-        }, 260);
+          }, 160);
+        }, 280);
       }
 
       function onCardClick(e, card) {
@@ -1889,18 +1940,20 @@
         if (!cardEl) return;
         const rect = cardEl.getBoundingClientRect();
         const sparkles = ['✨', '💖', '⭐', '🌸', '🎉','🧸','🎂'];
-        for (let i = 0; i < 6; i++) {
+        const isMobile = window.innerWidth <= 600;
+        const count = isMobile ? 3 : 5;
+        for (let i = 0; i < count; i++) {
           const sp = document.createElement('div');
           sp.className = 'confetti-heart';
           sp.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-          sp.style.fontSize = '1.1rem';
-          sp.style.left = (rect.left + rect.width / 2 + (Math.random() * 80 - 40)) + 'px';
-          sp.style.top = (rect.top + rect.height / 2 + (Math.random() * 80 - 40)) + 'px';
-          sp.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
-          sp.style.setProperty('--dy', (Math.random() * -120 - 20) + 'px');
+          sp.style.fontSize = isMobile ? '0.95rem' : '1.1rem';
+          sp.style.left = (rect.left + rect.width / 2 + (Math.random() * 60 - 30)) + 'px';
+          sp.style.top = (rect.top + rect.height / 2 + (Math.random() * 60 - 30)) + 'px';
+          sp.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+          sp.style.setProperty('--dy', (Math.random() * -100 - 20) + 'px');
           sp.style.setProperty('--drot', (Math.random() * 360 - 180) + 'deg');
           document.body.appendChild(sp);
-          setTimeout(() => sp.remove(), 1800);
+          setTimeout(() => sp.remove(), 1200);
         }
       }
 
