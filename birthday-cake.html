@@ -72,6 +72,8 @@
         transform: translateY(-300px);
         backface-visibility: hidden;
         opacity: 0;
+      }
+      .cake-stage.is-started .cake {
         animation: in 500ms 6s ease-out forwards;
       }
       .cake:after,
@@ -103,19 +105,19 @@
         width: 6.66666667px;
         height: 18px;
       }
-      .fuego:nth-child(1) {
+      .cake-stage.is-started .fuego:nth-child(1) {
         animation: fuego 2s 6.5s infinite;
       }
-      .fuego:nth-child(2) {
+      .cake-stage.is-started .fuego:nth-child(2) {
         animation: fuego 1.5s 6.5s infinite;
       }
-      .fuego:nth-child(3) {
+      .cake-stage.is-started .fuego:nth-child(3) {
         animation: fuego 1s 6.5s infinite;
       }
-      .fuego:nth-child(4) {
+      .cake-stage.is-started .fuego:nth-child(4) {
         animation: fuego 0.5s 6.5s infinite;
       }
-      .fuego:nth-child(5) {
+      .cake-stage.is-started .fuego:nth-child(5) {
         animation: fuego 0.2s 6.5s infinite;
       }
 
@@ -156,6 +158,7 @@
         padding-top: 0;
         margin-top: 0;
         text-align: center;
+        display: none;
       }
 
       .text {
@@ -169,6 +172,8 @@
         z-index: 5;
         opacity: 0;
         transform: translateY(18px);
+      }
+      .cake-stage.is-started .text {
         animation: fadeInAfterCake 1.2s 6.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
       }
 
@@ -217,6 +222,8 @@
         transition: all 0.3s ease;
         opacity: 0;
         transform: translateY(18px);
+      }
+      .cake-stage.is-started .scroll-cue {
         animation: fadeInCueAfterCake 1.2s 7.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, floatCue 2s 8.7s ease-in-out infinite;
       }
       .scroll-cue:hover {
@@ -244,6 +251,196 @@
       @keyframes floatCue {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(6px); }
+      }
+
+      /* ============================================== Intro Stage & Turntable */
+      .intro-stage {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 500;
+        padding: 16px;
+      }
+
+      .intro-card {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px rgba(139, 106, 96, 0.18), 0 4px 14px rgba(0, 0, 0, 0.04);
+        padding: 24px 28px 26px;
+        text-align: center;
+        max-width: 380px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: fadeInIntro 0.8s ease-out;
+      }
+      @keyframes fadeInIntro {
+        from { opacity: 0; transform: translateY(20px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .intro-badge {
+        display: inline-block;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #b33939;
+        background: rgba(238, 156, 167, 0.25);
+        padding: 4px 14px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+      }
+
+      .intro-title {
+        font-family: 'Dancing Script', cursive;
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #8b6a60;
+        margin: 0 0 4px 0;
+      }
+
+      .intro-sub {
+        font-size: 0.86rem;
+        color: #8b6a60;
+        margin: 0 0 16px 0;
+        font-style: italic;
+      }
+
+      .turntable-wrapper {
+        position: relative;
+        width: min(250px, 72vw);
+        height: min(250px, 72vw);
+        margin: 0 auto 20px;
+      }
+
+      .turntable-plinth {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 24px;
+        background: radial-gradient(circle at 50% 50%, #fdf8f5 0%, #faede8 100%);
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.8), 0 12px 30px rgba(139, 106, 96, 0.16);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .turntable-platter {
+        position: relative;
+        width: 90%;
+        height: 90%;
+      }
+
+      .vinyl-disc {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transform-origin: 49.74% 52.18%;
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+        transition: transform 0.5s ease;
+      }
+      .vinyl-disc.is-spinning {
+        animation: spinVinyl 3.4s linear infinite;
+      }
+      @keyframes spinVinyl {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .tonearm-arm {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        transform-origin: 54.9% 30.3%;
+        transform: rotate(26deg);
+        transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 5;
+        filter: drop-shadow(2px 6px 8px rgba(0, 0, 0, 0.25));
+      }
+      .tonearm-arm.is-playing {
+        transform: rotate(0deg);
+      }
+
+      .start-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 32px;
+        background: linear-gradient(135deg, #ee9ca7 0%, #ff758c 100%);
+        color: #ffffff;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 0.98rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(255, 117, 140, 0.38);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        letter-spacing: 0.5px;
+      }
+      .start-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 28px rgba(255, 117, 140, 0.48);
+      }
+      .start-btn:active {
+        transform: scale(0.96);
+      }
+
+      /* Floating mini music widget */
+      .music-floating-btn {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 999;
+        transition: all 0.3s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .music-floating-btn.is-active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .music-floating-btn:hover {
+        transform: scale(1.1);
+      }
+      .mini-vinyl {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: contain;
+        transform-origin: 49.74% 52.18%;
+      }
+      .mini-vinyl.is-spinning {
+        animation: spinVinyl 3.4s linear infinite;
       }
 
       /* ============================================== Gift Section & Envelope */
@@ -496,11 +693,19 @@
       }
 
       .typewriter-wrapper {
-        min-height: 80px;
-        padding: 12px 16px;
-        background: rgba(255, 240, 243, 0.75);
-        border-left: 4px solid #ee9ca7;
-        border-radius: 0 10px 10px 0;
+        min-height: 96px;
+        padding: 4px 6px 8px 8px;
+        background-color: transparent;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          transparent,
+          transparent 31px,
+          rgba(120, 150, 190, 0.45) 31px,
+          rgba(120, 150, 190, 0.45) 32px
+        );
+        line-height: 32px;
+        border: none;
+        border-radius: 0;
         margin-bottom: 10px;
         position: relative;
       }
@@ -509,7 +714,7 @@
         font-size: 1.35rem;
         font-weight: 700;
         color: #c0392b;
-        line-height: 1.55;
+        line-height: 32px;
         font-family: 'Dancing Script', cursive;
         display: inline;
         letter-spacing: 0.5px;
@@ -521,13 +726,6 @@
         font-weight: 700;
         color: #c0392b;
         font-family: 'Dancing Script', cursive;
-        animation: blinkCursor 0.8s infinite;
-        vertical-align: baseline;
-      }
-      @keyframes blinkCursor {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-      }
         animation: blinkCursor 0.8s infinite;
         vertical-align: baseline;
       }
@@ -682,6 +880,96 @@
         font-weight: 700;
       }
 
+      /* Special card: sinh_nhat_19 */
+      .card-sinh-nhat-19 {
+        border: 2px solid #ee9ca7;
+      }
+      .card-sinh-nhat-19 .polaroid-caption {
+        color: #c0392b;
+        font-weight: 700;
+      }
+
+      .update-placeholder {
+        position: absolute;
+        inset: 0;
+        background: #fff5f7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        z-index: 2;
+        border-radius: 4px;
+      }
+      .update-loader-icon {
+        font-size: 1.8rem;
+        animation: spinHourglass 2s infinite ease-in-out;
+      }
+      @keyframes spinHourglass {
+        0% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .update-text {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #b33939;
+        letter-spacing: 0.5px;
+      }
+
+      .photo-print-down {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        clip-path: inset(0 0 100% 0);
+        opacity: 0;
+      }
+      .photo-print-down.is-printing {
+        opacity: 1;
+        animation: printDownReveal 2.2s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+      }
+      @keyframes printDownReveal {
+        0% {
+          clip-path: inset(0 0 100% 0);
+          filter: brightness(1.2) contrast(0.9);
+        }
+        100% {
+          clip-path: inset(0 0 0 0);
+          filter: brightness(1) contrast(1);
+        }
+      }
+
+      .print-scanner-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #ff4757, #ff6b81, #ff4757, transparent);
+        box-shadow: 0 0 10px rgba(255, 71, 87, 0.85);
+        opacity: 0;
+        z-index: 3;
+        pointer-events: none;
+      }
+      .print-scanner-line.is-printing {
+        opacity: 1;
+        animation: printScanMove 2.2s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+      }
+      @keyframes printScanMove {
+        0% {
+          top: 0%;
+          opacity: 1;
+        }
+        96% {
+          top: 100%;
+          opacity: 1;
+        }
+        100% {
+          top: 100%;
+          opacity: 0;
+        }
+      }
+
       /* Upload Slot Card */
       .card-upload-slot {
         background: #fffafa;
@@ -823,13 +1111,22 @@
           justify-content: center;
         }
         .typewriter-wrapper {
-          min-height: 55px;
-          padding: 10px 14px;
+          min-height: 65px;
+          padding: 2px 4px 6px 4px;
+          background-image: repeating-linear-gradient(
+            to bottom,
+            transparent,
+            transparent 27px,
+            rgba(120, 150, 190, 0.45) 27px,
+            rgba(120, 150, 190, 0.45) 28px
+          );
+          line-height: 28px;
+          border: none;
           margin-bottom: 6px;
         }
         .typewriter-message {
-          font-size: 1.05rem;
-          line-height: 1.45;
+          font-size: 1.1rem;
+          line-height: 28px;
         }
         .typewriter-cursor {
           font-size: 1.1rem;
@@ -882,6 +1179,37 @@
     </style>
   </head>
   <body>
+    <!-- Floating mini music widget -->
+    <div class="music-floating-btn" id="musicFloatingBtn" onclick="toggleMusic()" title="Bật/Tắt nhạc">
+      <img src="birthday/dia_than.png" id="miniVinyl" class="mini-vinyl" alt="Vinyl music">
+    </div>
+
+    <!-- Intro Stage with Turntable -->
+    <div class="intro-stage" id="introStage">
+      <div class="intro-card">
+        <div class="intro-badge">Minh Thư's Birthday ✨</div>
+        <h1 class="intro-title">Món quà nhỏ tặng em 🎵</h1>
+        <p class="intro-sub">Bật âm lượng và chạm bắt đầu nhé</p>
+
+        <div class="turntable-wrapper">
+          <div class="turntable-plinth">
+            <div class="turntable-platter">
+              <img src="birthday/dia_than.png" id="vinylDisc" class="vinyl-disc" alt="Đĩa than">
+              <img src="birthday/tonearm.png" id="tonearmArm" class="tonearm-arm" alt="Tonearm">
+            </div>
+          </div>
+        </div>
+
+        <button class="start-btn" id="startBtn" onclick="startExperience()">
+          <span class="start-icon">▶</span>
+          <span class="start-txt">Bắt đầu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" src="music.m4a" loop preload="auto" playsinline></audio>
+
     <div class="cake-stage" id="cakeStage">
       <div class="cake-box">
         <div class="cake">
@@ -1238,6 +1566,23 @@
                       </div>
                       <div class="polaroid-caption">last year 🎂</div>
                     </div>
+
+                    <!-- Photo 18: sinh_nhat_19 with 'this year 🥳🎉🎂🧸' and top-to-bottom print effect -->
+                    <div class="polaroid-card card-sinh-nhat-19" data-order="18" id="cardSinhNhat19" style="--tilt: 3deg; --tx: 3px; --ty: -2px;" onclick="onCardClick(event, this)">
+                      <div class="polaroid-pin">🥳</div>
+                      <div class="polaroid-image-box" id="boxSinhNhat19" style="position: relative;">
+                        <!-- Đang update '...' overlay -->
+                        <div class="update-placeholder" id="updatePlaceholder19">
+                          <div class="update-loader-icon">⏳</div>
+                          <div class="update-text">Đang update<span id="updateDots">.</span></div>
+                        </div>
+                        <!-- Photo printing from top to bottom -->
+                        <img src="birthday/sinh_nhat_19.JPG" id="imgSinhNhat19" class="photo-print-down" alt="Minh Thư sinh_nhat_19" loading="lazy">
+                        <!-- Scanner light line -->
+                        <div class="print-scanner-line" id="printScannerLine"></div>
+                      </div>
+                      <div class="polaroid-caption">this year 🥳🎉🎂🧸</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1267,6 +1612,85 @@
 
       let photoDeck = [];
       let isCyclingPhoto = false;
+
+      function startExperience() {
+        const startBtn = document.getElementById('startBtn');
+        const tonearm = document.getElementById('tonearmArm');
+        const vinyl = document.getElementById('vinylDisc');
+        const bgMusic = document.getElementById('bgMusic');
+        const miniVinyl = document.getElementById('miniVinyl');
+        const floatingBtn = document.getElementById('musicFloatingBtn');
+        const introStage = document.getElementById('introStage');
+        const cakeStage = document.getElementById('cakeStage');
+
+        if (startBtn) {
+          startBtn.disabled = true;
+          startBtn.style.pointerEvents = 'none';
+          startBtn.style.opacity = '0.75';
+          startBtn.innerHTML = '<span>Đang phát...</span> 🎶';
+        }
+
+        // 1. Tonearm xoay vào phía bên trên mặt đĩa than
+        if (tonearm) {
+          tonearm.classList.add('is-playing');
+        }
+
+        // 2. Sau khi cần kim chạm mặt đĩa: Đĩa than quay và bắt đầu phát nhạc
+        setTimeout(() => {
+          if (vinyl) vinyl.classList.add('is-spinning');
+          if (miniVinyl) miniVinyl.classList.add('is-spinning');
+          if (floatingBtn) floatingBtn.classList.add('is-active');
+
+          if (bgMusic) {
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(e => console.log('Audio autoplay prevented:', e));
+          }
+        }, 450);
+
+        // 3. Sau khi trải nghiệm máy phát nhạc quay (~2.2s) -> chuyển mượt sang trang bánh kem sinh nhật
+        setTimeout(() => {
+          if (!introStage || !cakeStage) return;
+
+          introStage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+          introStage.style.opacity = '0';
+          introStage.style.transform = 'translateY(-20px) scale(0.96)';
+
+          setTimeout(() => {
+            introStage.style.display = 'none';
+            cakeStage.style.display = 'block';
+            cakeStage.classList.add('is-started');
+
+            // Khởi động lại chuyển động bánh kem SVG từ giây 0
+            const svgCake = document.getElementById('cake');
+            if (svgCake && typeof svgCake.setCurrentTime === 'function') {
+              try { svgCake.setCurrentTime(0); } catch(e) {}
+            }
+
+            cakeStage.style.opacity = '0';
+            cakeStage.style.transform = 'translateY(20px)';
+            void cakeStage.offsetWidth;
+
+            cakeStage.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
+            cakeStage.style.opacity = '1';
+            cakeStage.style.transform = 'translateY(0)';
+          }, 800);
+        }, 2200);
+      }
+
+      function toggleMusic() {
+        const bgMusic = document.getElementById('bgMusic');
+        const miniVinyl = document.getElementById('miniVinyl');
+        if (!bgMusic) return;
+
+        if (bgMusic.paused) {
+          bgMusic.play().then(() => {
+            if (miniVinyl) miniVinyl.classList.add('is-spinning');
+          }).catch(e => console.log(e));
+        } else {
+          bgMusic.pause();
+          if (miniVinyl) miniVinyl.classList.remove('is-spinning');
+        }
+      }
 
       function goToNextPage() {
         const cakeStage = document.getElementById('cakeStage');
@@ -1424,6 +1848,9 @@
           cycledCard.style.transform = `translate(${tx}, ${ty}) rotate(${tilt}) scale(1)`;
           cycledCard.style.opacity = '1';
 
+          // Kiểm tra thẻ ảnh mới trên cùng: nếu là sinh_nhat_19 thì chạy hiệu ứng update & in ảnh
+          checkTopCardAnimation(photoDeck[0]);
+
           setTimeout(() => {
             isCyclingPhoto = false;
           }, 200);
@@ -1494,6 +1921,65 @@
           spawnHearts();
         };
         reader.readAsDataURL(file);
+      }
+
+
+      function checkTopCardAnimation(card) {
+        if (!card) return;
+        if (card.id === 'cardSinhNhat19' || card.dataset.order === '18') {
+          triggerSinhNhat19Print(card);
+        }
+      }
+
+      function triggerSinhNhat19Print(card) {
+        if (!card || card.dataset.printed === 'true' || card.dataset.printing === 'true') return;
+        card.dataset.printing = 'true';
+
+        const updateDots = document.getElementById('updateDots');
+        const updatePlaceholder = document.getElementById('updatePlaceholder19');
+        const img19 = document.getElementById('imgSinhNhat19');
+        const scanLine = document.getElementById('printScannerLine');
+
+        let cycleCount = 0;
+        let dotCount = 1;
+        const maxCycles = 3;
+
+        const dotInterval = setInterval(() => {
+          dotCount++;
+          if (dotCount > 3) {
+            dotCount = 1;
+            cycleCount++;
+          }
+          if (updateDots) {
+            updateDots.textContent = '.'.repeat(dotCount);
+          }
+
+          if (cycleCount >= maxCycles) {
+            clearInterval(dotInterval);
+
+            // Hoàn thành ~3 lần chạy dấu '...' -> Bắt đầu hiệu ứng in ảnh từ trên xuống
+            if (updatePlaceholder) {
+              updatePlaceholder.style.transition = 'opacity 0.4s ease';
+              updatePlaceholder.style.opacity = '0';
+              setTimeout(() => {
+                updatePlaceholder.style.display = 'none';
+              }, 400);
+            }
+
+            if (img19) {
+              img19.classList.add('is-printing');
+            }
+            if (scanLine) {
+              scanLine.classList.add('is-printing');
+            }
+
+            setTimeout(() => {
+              card.dataset.printed = 'true';
+              card.dataset.printing = 'false';
+              spawnHearts();
+            }, 2200);
+          }
+        }, 280);
       }
 
       // Tạo hiệu ứng tim và biểu tượng bay lơ lửng
