@@ -268,15 +268,15 @@
       }
 
       .intro-card {
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.95);
         border-radius: 28px;
-        box-shadow: 0 20px 50px rgba(139, 106, 96, 0.18), 0 4px 14px rgba(0, 0, 0, 0.04);
-        padding: 24px 28px 26px;
+        box-shadow: 0 24px 55px rgba(139, 106, 96, 0.2), 0 4px 14px rgba(0, 0, 0, 0.04);
+        padding: 24px 22px 26px;
         text-align: center;
-        max-width: 380px;
+        max-width: 460px;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -288,70 +288,36 @@
         to { opacity: 1; transform: translateY(0) scale(1); }
       }
 
-      .intro-badge {
-        display: inline-block;
-        font-size: 0.76rem;
-        font-weight: 700;
-        color: #b33939;
-        background: rgba(238, 156, 167, 0.25);
-        padding: 4px 14px;
-        border-radius: 20px;
-        margin-bottom: 8px;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-      }
-
-      .intro-title {
-        font-family: 'Dancing Script', cursive;
-        font-size: 2.1rem;
-        font-weight: 700;
-        color: #8b6a60;
-        margin: 0 0 4px 0;
-      }
-
-      .intro-sub {
-        font-size: 0.86rem;
-        color: #8b6a60;
-        margin: 0 0 16px 0;
-        font-style: italic;
-      }
-
-      .turntable-wrapper {
-        position: relative;
-        width: min(250px, 72vw);
-        height: min(250px, 72vw);
-        margin: 0 auto 20px;
-      }
-
+      /* Bàn máy phát nhạc đĩa than chân thực (Turntable Plinth) */
       .turntable-plinth {
         position: relative;
-        width: 100%;
-        height: 100%;
-        border-radius: 24px;
-        background: radial-gradient(circle at 50% 50%, #fdf8f5 0%, #faede8 100%);
-        border: 2px solid rgba(255, 255, 255, 0.9);
-        box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.8), 0 12px 30px rgba(139, 106, 96, 0.16);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: min(410px, 88vw);
+        aspect-ratio: 420 / 290;
+        border-radius: 22px;
+        background: radial-gradient(circle at 40% 50%, #fdf9f6 0%, #f3eae3 100%);
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.8), 0 14px 32px rgba(139, 106, 96, 0.18);
+        margin: 0 auto 20px;
         overflow: hidden;
       }
 
+      /* Mâm xoay đĩa than đặt bên trái bàn máy */
       .turntable-platter {
-        position: relative;
-        width: 90%;
-        height: 90%;
+        position: absolute;
+        left: 4.5%;
+        top: 6.9%;
+        width: 59.5%;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
       }
 
       .vinyl-disc {
-        position: absolute;
-        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: contain;
-        transform-origin: 49.74% 52.18%;
-        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
-        transition: transform 0.5s ease;
+        transform-origin: 50% 50%;
+        display: block;
       }
       .vinyl-disc.is-spinning {
         animation: spinVinyl 3.4s linear infinite;
@@ -361,21 +327,29 @@
         100% { transform: rotate(360deg); }
       }
 
-      .tonearm-arm {
+      /* Khung cần kim Tonearm gắn trên góc phải bàn máy */
+      .tonearm-assembly {
         position: absolute;
-        inset: 0;
+        right: 2%;
+        top: 5%;
+        height: 79.3%;
+        width: calc(79.3% * 869 / 2445);
+        pointer-events: none;
+      }
+
+      .tonearm-arm {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        pointer-events: none;
-        transform-origin: 54.9% 30.3%;
-        transform: rotate(26deg);
+        transform-origin: 58.46% 19.63%;
+        transform: rotate(3deg);
         transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-        z-index: 5;
-        filter: drop-shadow(2px 6px 8px rgba(0, 0, 0, 0.25));
+        filter: drop-shadow(2px 6px 8px rgba(0, 0, 0, 0.28));
+        display: block;
       }
+      /* Khi ấn bắt đầu: cần kim xoay vào mâm đĩa và hạ kim lên rãnh ngoài */
       .tonearm-arm.is-playing {
-        transform: rotate(0deg);
+        transform: rotate(-21deg);
       }
 
       .start-btn {
@@ -383,22 +357,22 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 11px 32px;
+        padding: 12px 36px;
         background: linear-gradient(135deg, #ee9ca7 0%, #ff758c 100%);
         color: #ffffff;
         font-family: 'Be Vietnam Pro', sans-serif;
-        font-size: 0.98rem;
+        font-size: 1rem;
         font-weight: 700;
         border: none;
         border-radius: 30px;
         cursor: pointer;
-        box-shadow: 0 8px 22px rgba(255, 117, 140, 0.38);
+        box-shadow: 0 8px 24px rgba(255, 117, 140, 0.4);
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         letter-spacing: 0.5px;
       }
       .start-btn:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 12px 28px rgba(255, 117, 140, 0.48);
+        box-shadow: 0 12px 30px rgba(255, 117, 140, 0.5);
       }
       .start-btn:active {
         transform: scale(0.96);
@@ -1181,22 +1155,21 @@
   <body>
     <!-- Floating mini music widget -->
     <div class="music-floating-btn" id="musicFloatingBtn" onclick="toggleMusic()" title="Bật/Tắt nhạc">
-      <img src="birthday/dia_than.png" id="miniVinyl" class="mini-vinyl" alt="Vinyl music">
+      <img src="birthday/vinyl_clean.png" id="miniVinyl" class="mini-vinyl" alt="Vinyl music">
     </div>
 
     <!-- Intro Stage with Turntable -->
     <div class="intro-stage" id="introStage">
       <div class="intro-card">
-        <div class="intro-badge">Minh Thư's Birthday ✨</div>
-        <h1 class="intro-title">Món quà nhỏ tặng em 🎵</h1>
-        <p class="intro-sub">Bật âm lượng và chạm bắt đầu nhé</p>
-
-        <div class="turntable-wrapper">
-          <div class="turntable-plinth">
-            <div class="turntable-platter">
-              <img src="birthday/dia_than.png" id="vinylDisc" class="vinyl-disc" alt="Đĩa than">
-              <img src="birthday/tonearm.png" id="tonearmArm" class="tonearm-arm" alt="Tonearm">
-            </div>
+        <!-- Turntable Plinth / Máy phát nhạc đĩa than -->
+        <div class="turntable-plinth">
+          <!-- Đĩa than mâm xoay bên trái -->
+          <div class="turntable-platter">
+            <img src="birthday/vinyl_clean.png" id="vinylDisc" class="vinyl-disc" alt="Đĩa than">
+          </div>
+          <!-- Cần kim Tonearm gắn bên phải -->
+          <div class="tonearm-assembly">
+            <img src="birthday/tonearm_clean.png" id="tonearmArm" class="tonearm-arm" alt="Tonearm">
           </div>
         </div>
 
