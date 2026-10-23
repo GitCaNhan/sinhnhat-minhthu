@@ -1719,12 +1719,16 @@
         const chars = Array.from(wishMessage);
         let idx = 0;
 
-        const timer = setInterval(() => {
+        function typeNextChar() {
           if (idx < chars.length) {
-            target.textContent += chars[idx];
+            const char = chars[idx];
+            target.textContent += char;
             idx++;
+
+            // Sau mỗi dấu . thì text đợi khoảng 0.5s rồi chạy text tiếp
+            const delay = (char === '.') ? 500 : 70;
+            setTimeout(typeNextChar, delay);
           } else {
-            clearInterval(timer);
             isTypingDone = true;
             if (cursor) {
               cursor.style.display = 'none';
@@ -1736,7 +1740,9 @@
             // Sau khi text chạy xong -> Hiện album ảnh lồng lên nhau góc bên phải
             revealPhotoStack();
           }
-        }, 70);
+        }
+
+        typeNextChar();
       }
 
       function revealPhotoStack() {
