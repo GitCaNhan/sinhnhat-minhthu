@@ -265,40 +265,57 @@
         justify-content: center;
         z-index: 500;
         padding: 16px;
+        pointer-events: auto;
+        transition: background 0.6s ease;
+      }
+      .intro-stage.is-started {
+        pointer-events: none;
       }
 
-      .intro-card {
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.95);
-        border-radius: 28px;
-        box-shadow: 0 24px 55px rgba(139, 106, 96, 0.2), 0 4px 14px rgba(0, 0, 0, 0.04);
-        padding: 24px 22px 26px;
-        text-align: center;
-        max-width: 460px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        animation: fadeInIntro 0.8s ease-out;
+      /* Turntable Box: Ban đầu ở giữa, sau khi ấn Bắt đầu sẽ thu nhỏ và chuyển lên góc trên bên phải */
+      .turntable-box {
+        position: relative;
+        width: min(390px, 86vw);
+        aspect-ratio: 420 / 290;
+        margin: 0 auto 20px;
+        transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 1000;
+        cursor: default;
       }
-      @keyframes fadeInIntro {
-        from { opacity: 0; transform: translateY(20px) scale(0.96); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
+
+      /* Trạng thái thu nhỏ lên góc trên bên phải: vẫn nhìn thấy đĩa than và tonearm */
+      .turntable-box.is-minimized {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        width: 125px;
+        aspect-ratio: 420 / 290;
+        margin: 0;
+        cursor: pointer;
+        pointer-events: auto !important;
+        z-index: 1000;
+        filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.25));
+        transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s ease;
+      }
+      .turntable-box.is-minimized:hover {
+        transform: scale(1.06);
       }
 
       /* Bàn máy phát nhạc đĩa than chân thực (Turntable Plinth) */
       .turntable-plinth {
         position: relative;
-        width: min(410px, 88vw);
-        aspect-ratio: 420 / 290;
+        width: 100%;
+        height: 100%;
         border-radius: 22px;
         background: radial-gradient(circle at 40% 50%, #fdf9f6 0%, #f3eae3 100%);
         border: 2px solid rgba(255, 255, 255, 0.95);
         box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.8), 0 14px 32px rgba(139, 106, 96, 0.18);
-        margin: 0 auto 20px;
         overflow: hidden;
+        transition: border-radius 0.6s ease;
+      }
+      .turntable-box.is-minimized .turntable-plinth {
+        border-radius: 12px;
+        border-width: 1.5px;
       }
 
       /* Mâm xoay đĩa than đặt bên trái bàn máy */
@@ -342,14 +359,14 @@
         height: 100%;
         object-fit: contain;
         transform-origin: 58.46% 19.63%;
-        transform: rotate(3deg);
+        transform: rotate(0deg);
         transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         filter: drop-shadow(2px 6px 8px rgba(0, 0, 0, 0.28));
         display: block;
       }
-      /* Khi ấn bắt đầu: cần kim xoay vào mâm đĩa và hạ kim lên rãnh ngoài */
+      /* Khi ấn bắt đầu: cần kim xoay sang trái (đổi chiều chuẩn) hạ kim lên rãnh đĩa ngoài */
       .tonearm-arm.is-playing {
-        transform: rotate(-21deg);
+        transform: rotate(22deg);
       }
 
       .start-btn {
@@ -367,7 +384,7 @@
         border-radius: 30px;
         cursor: pointer;
         box-shadow: 0 8px 24px rgba(255, 117, 140, 0.4);
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         letter-spacing: 0.5px;
       }
       .start-btn:hover {
@@ -376,45 +393,6 @@
       }
       .start-btn:active {
         transform: scale(0.96);
-      }
-
-      /* Floating mini music widget */
-      .music-floating-btn {
-        position: fixed;
-        top: 16px;
-        right: 16px;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 999;
-        transition: all 0.3s ease;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .music-floating-btn.is-active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-      .music-floating-btn:hover {
-        transform: scale(1.1);
-      }
-      .mini-vinyl {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: contain;
-        transform-origin: 49.74% 52.18%;
-      }
-      .mini-vinyl.is-spinning {
-        animation: spinVinyl 3.4s linear infinite;
       }
 
       /* ============================================== Gift Section & Envelope */
@@ -652,6 +630,7 @@
       .letter-col-left {
         flex: 1.15;
         min-width: 250px;
+        text-align: left;
       }
 
       .letter-salutation {
@@ -662,6 +641,8 @@
         margin-bottom: 8px;
         display: flex;
         align-items: center;
+        justify-content: flex-start;
+        text-align: left;
         gap: 8px;
         letter-spacing: 0.5px;
       }
@@ -682,6 +663,7 @@
         border-radius: 0;
         margin-bottom: 10px;
         position: relative;
+        text-align: left;
       }
 
       .typewriter-message {
@@ -692,6 +674,7 @@
         font-family: 'Dancing Script', cursive;
         display: inline;
         letter-spacing: 0.5px;
+        text-align: left;
       }
 
       .typewriter-cursor {
@@ -1074,15 +1057,21 @@
           gap: 6px;
           align-items: center;
         }
+        .turntable-box.is-minimized {
+          width: 100px;
+          top: 10px;
+          right: 10px;
+        }
         .letter-col-left {
           width: 100%;
           min-width: 0;
-          text-align: center;
+          text-align: left !important;
         }
         .letter-salutation {
           font-size: 1.45rem;
           margin-bottom: 4px;
-          justify-content: center;
+          justify-content: flex-start !important;
+          text-align: left !important;
         }
         .typewriter-wrapper {
           min-height: 65px;
@@ -1097,10 +1086,12 @@
           line-height: 28px;
           border: none;
           margin-bottom: 6px;
+          text-align: left !important;
         }
         .typewriter-message {
           font-size: 1.1rem;
           line-height: 28px;
+          text-align: left !important;
         }
         .typewriter-cursor {
           font-size: 1.1rem;
@@ -1153,15 +1144,10 @@
     </style>
   </head>
   <body>
-    <!-- Floating mini music widget -->
-    <div class="music-floating-btn" id="musicFloatingBtn" onclick="toggleMusic()" title="Bật/Tắt nhạc">
-      <img src="birthday/vinyl_clean.png" id="miniVinyl" class="mini-vinyl" alt="Vinyl music">
-    </div>
-
-    <!-- Intro Stage with Turntable -->
+    <!-- Intro Stage with Turntable Player -->
     <div class="intro-stage" id="introStage">
-      <div class="intro-card">
-        <!-- Turntable Plinth / Máy phát nhạc đĩa than -->
+      <!-- Turntable Box: Thu nhỏ lên góc trên bên phải khi ấn Bắt đầu -->
+      <div class="turntable-box" id="turntableBox" onclick="toggleTurntableMusic(event)" title="Bật/Tắt nhạc">
         <div class="turntable-plinth">
           <!-- Đĩa than mâm xoay bên trái -->
           <div class="turntable-platter">
@@ -1172,12 +1158,12 @@
             <img src="birthday/tonearm_clean.png" id="tonearmArm" class="tonearm-arm" alt="Tonearm">
           </div>
         </div>
-
-        <button class="start-btn" id="startBtn" onclick="startExperience()">
-          <span class="start-icon">▶</span>
-          <span class="start-txt">Bắt đầu</span>
-        </button>
       </div>
+
+      <button class="start-btn" id="startBtn" onclick="startExperience()">
+        <span class="start-icon">▶</span>
+        <span class="start-txt">Bắt đầu</span>
+      </button>
     </div>
 
     <!-- Background Music -->
@@ -1581,7 +1567,7 @@
     <script>
       let isEnvelopeOpened = false;
       let isTypingDone = false;
-      const wishMessage = "-Nhiệt liệt chào mừng đổi mới lần XIX -  Chúc em nhiệm kỳ mới có tất cả trừ vất vả, Xinh nhất sinh nhật vui vẻ nhaaa!!! 🥳🥳😗";
+      const wishMessage = "Nhiệt liệt chào mừng đổi mới lần thứ XIX. Chúc em nhiệm kỳ mới có tất cả trừ vất vả. Xinh nhất sinh nhật vui vẻ nhaaa!!! 🥳🥳😗";
 
       let photoDeck = [];
       let isCyclingPhoto = false;
@@ -1591,19 +1577,17 @@
         const tonearm = document.getElementById('tonearmArm');
         const vinyl = document.getElementById('vinylDisc');
         const bgMusic = document.getElementById('bgMusic');
-        const miniVinyl = document.getElementById('miniVinyl');
-        const floatingBtn = document.getElementById('musicFloatingBtn');
+        const turntableBox = document.getElementById('turntableBox');
         const introStage = document.getElementById('introStage');
         const cakeStage = document.getElementById('cakeStage');
 
         if (startBtn) {
           startBtn.disabled = true;
           startBtn.style.pointerEvents = 'none';
-          startBtn.style.opacity = '0.75';
-          startBtn.innerHTML = '<span>Đang phát...</span> 🎶';
+          startBtn.style.opacity = '0';
         }
 
-        // 1. Tonearm xoay vào phía bên trên mặt đĩa than
+        // 1. Tonearm xoay sang trái đặt lên rãnh đĩa ngoài cùng
         if (tonearm) {
           tonearm.classList.add('is-playing');
         }
@@ -1611,57 +1595,59 @@
         // 2. Sau khi cần kim chạm mặt đĩa: Đĩa than quay và bắt đầu phát nhạc
         setTimeout(() => {
           if (vinyl) vinyl.classList.add('is-spinning');
-          if (miniVinyl) miniVinyl.classList.add('is-spinning');
-          if (floatingBtn) floatingBtn.classList.add('is-active');
-
           if (bgMusic) {
             bgMusic.currentTime = 0;
             bgMusic.play().catch(e => console.log('Audio autoplay prevented:', e));
           }
         }, 450);
 
-        // 3. Sau khi trải nghiệm máy phát nhạc quay (~2.2s) -> chuyển mượt sang trang bánh kem sinh nhật
+        // 3. Sau khi người xem thấy máy quay phát nhạc (~2s) -> Thu nhỏ cả đĩa than & tonearm lên góc trên bên phải
         setTimeout(() => {
-          if (!introStage || !cakeStage) return;
+          if (!turntableBox || !cakeStage) return;
 
-          introStage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-          introStage.style.opacity = '0';
-          introStage.style.transform = 'translateY(-20px) scale(0.96)';
+          // Thu nhỏ ô đĩa than & tonearm lên góc trên bên phải, vẫn nhìn thấy cả hai đang quay/phát
+          turntableBox.classList.add('is-minimized');
+          if (introStage) {
+            introStage.classList.add('is-started');
+          }
 
-          setTimeout(() => {
-            introStage.style.display = 'none';
-            cakeStage.style.display = 'block';
-            cakeStage.classList.add('is-started');
+          cakeStage.style.display = 'block';
+          cakeStage.classList.add('is-started');
 
-            // Khởi động lại chuyển động bánh kem SVG từ giây 0
-            const svgCake = document.getElementById('cake');
-            if (svgCake && typeof svgCake.setCurrentTime === 'function') {
-              try { svgCake.setCurrentTime(0); } catch(e) {}
-            }
+          // Khởi động lại chuyển động bánh kem SVG từ giây 0
+          const svgCake = document.getElementById('cake');
+          if (svgCake && typeof svgCake.setCurrentTime === 'function') {
+            try { svgCake.setCurrentTime(0); } catch(e) {}
+          }
 
-            cakeStage.style.opacity = '0';
-            cakeStage.style.transform = 'translateY(20px)';
-            void cakeStage.offsetWidth;
+          cakeStage.style.opacity = '0';
+          cakeStage.style.transform = 'translateY(20px)';
+          void cakeStage.offsetWidth;
 
-            cakeStage.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
-            cakeStage.style.opacity = '1';
-            cakeStage.style.transform = 'translateY(0)';
-          }, 800);
-        }, 2200);
+          cakeStage.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
+          cakeStage.style.opacity = '1';
+          cakeStage.style.transform = 'translateY(0)';
+        }, 2000);
       }
 
-      function toggleMusic() {
+      function toggleTurntableMusic(e) {
+        if (e) e.stopPropagation();
+        const box = document.getElementById('turntableBox');
+        if (!box || !box.classList.contains('is-minimized')) return;
         const bgMusic = document.getElementById('bgMusic');
-        const miniVinyl = document.getElementById('miniVinyl');
+        const vinyl = document.getElementById('vinylDisc');
+        const tonearm = document.getElementById('tonearmArm');
         if (!bgMusic) return;
 
         if (bgMusic.paused) {
           bgMusic.play().then(() => {
-            if (miniVinyl) miniVinyl.classList.add('is-spinning');
-          }).catch(e => console.log(e));
+            if (tonearm) tonearm.classList.add('is-playing');
+            if (vinyl) vinyl.classList.add('is-spinning');
+          }).catch(err => console.log(err));
         } else {
           bgMusic.pause();
-          if (miniVinyl) miniVinyl.classList.remove('is-spinning');
+          if (tonearm) tonearm.classList.remove('is-playing');
+          if (vinyl) vinyl.classList.remove('is-spinning');
         }
       }
 
@@ -1841,7 +1827,7 @@
       function spawnMiniSparkle(cardEl) {
         if (!cardEl) return;
         const rect = cardEl.getBoundingClientRect();
-        const sparkles = ['✨', '💖', '⭐', '🌸', '🎉'];
+        const sparkles = ['✨', '💖', '⭐', '🌸', '🎉','🧸','🎂'];
         for (let i = 0; i < 6; i++) {
           const sp = document.createElement('div');
           sp.className = 'confetti-heart';
