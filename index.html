@@ -274,31 +274,42 @@
 
       /* Turntable Box: Ban đầu ở giữa, sau khi ấn Bắt đầu sẽ thu nhỏ và chuyển lên góc trên bên phải */
       .turntable-box {
-        position: relative;
+        --shrink-duration: 3.3s; /* <-- Chỉnh thời gian thu nhỏ tại đây (ví dụ 2s, 2.5s, 3s, 4s...) */
+        position: fixed;
+        top: calc(50% - 32px);
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: min(390px, 86vw);
         aspect-ratio: 420 / 290;
-        margin: 0 auto 20px;
-        transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
         z-index: 1000;
         cursor: default;
+        transition: top var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    left var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    width var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    transform var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    filter var(--shrink-duration) ease;
       }
 
-      /* Trạng thái thu nhỏ lên góc trên bên phải: vẫn nhìn thấy đĩa than và tonearm */
+      /* Trạng thái thu nhỏ lên góc trên bên phải: lướt bay chéo êm ái từ giữa màn hình lên góc */
       .turntable-box.is-minimized {
         position: fixed;
         top: 14px;
-        right: 14px;
+        left: calc(100% - 14px);
+        transform: translate(-100%, 0);
         width: 125px;
         aspect-ratio: 420 / 290;
-        margin: 0;
         cursor: pointer;
         pointer-events: auto !important;
         z-index: 1000;
         filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.25));
-        transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s ease;
+        transition: top var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    left var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    width var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    transform var(--shrink-duration) cubic-bezier(0.22, 1, 0.36, 1),
+                    filter var(--shrink-duration) ease;
       }
       .turntable-box.is-minimized:hover {
-        transform: scale(1.06);
+        transform: translate(-100%, 0) scale(1.06);
       }
 
       /* Bàn máy phát nhạc đĩa than chân thực (Turntable Plinth) */
@@ -370,6 +381,10 @@
       }
 
       .start-btn {
+        position: fixed;
+        top: calc(50% + 145px);
+        left: 50%;
+        transform: translate(-50%, -50%);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -386,13 +401,14 @@
         box-shadow: 0 8px 24px rgba(255, 117, 140, 0.4);
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         letter-spacing: 0.5px;
+        z-index: 1001;
       }
       .start-btn:hover {
-        transform: translateY(-3px) scale(1.05);
+        transform: translate(-50%, -50%) translateY(-3px) scale(1.05);
         box-shadow: 0 12px 30px rgba(255, 117, 140, 0.5);
       }
       .start-btn:active {
-        transform: scale(0.96);
+        transform: translate(-50%, -50%) scale(0.96);
       }
 
       /* ============================================== Gift Section & Envelope */
@@ -1062,7 +1078,11 @@
         .turntable-box.is-minimized {
           width: 100px;
           top: 10px;
-          right: 10px;
+          left: calc(100% - 10px);
+          transform: translate(-100%, 0);
+        }
+        .start-btn {
+          top: calc(50% + 125px);
         }
         .letter-col-left {
           width: 100%;
@@ -1608,29 +1628,47 @@
         setTimeout(() => {
           if (!turntableBox || !cakeStage) return;
 
-          // Thu nhỏ ô đĩa than & tonearm lên góc trên bên phải, vẫn nhìn thấy cả hai đang quay/phát
+          // Bắt đầu lướt thu nhỏ ô đĩa than & tonearm lên góc trên bên phải
           turntableBox.classList.add('is-minimized');
           if (introStage) {
             introStage.classList.add('is-started');
           }
 
-          cakeStage.style.display = 'block';
-          cakeStage.classList.add('is-started');
+          // Đợi đĩa nhạc bay về đúng vị trí ở góc trên bên phải xong thì mới kích hoạt bánh kem thả xuống
+          let cakeStarted = false;
+          function triggerCakeStage() {
+            if (cakeStarted) return;
+            cakeStarted = true;
 
-          // Khởi động lại chuyển động bánh kem SVG từ giây 0
-          const svgCake = document.getElementById('cake');
-          if (svgCake && typeof svgCake.setCurrentTime === 'function') {
-            try { svgCake.setCurrentTime(0); } catch(e) {}
+            cakeStage.style.display = 'block';
+            cakeStage.classList.add('is-started');
+
+            // Khởi động lại chuyển động bánh kem SVG từ giây 0
+            const svgCake = document.getElementById('cake');
+            if (svgCake && typeof svgCake.setCurrentTime === 'function') {
+              try { svgCake.setCurrentTime(0); } catch(e) {}
+            }
+
+            cakeStage.style.opacity = '0';
+            cakeStage.style.transform = 'translateY(20px)';
+            void cakeStage.offsetWidth;
+
+            cakeStage.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
+            cakeStage.style.opacity = '1';
+            cakeStage.style.transform = 'translateY(0)';
           }
 
-          cakeStage.style.opacity = '0';
-          cakeStage.style.transform = 'translateY(20px)';
-          void cakeStage.offsetWidth;
+          // Tự động nhận diện số giây bạn cài ở biến --shrink-duration trong CSS
+          const shrinkSec = parseFloat(getComputedStyle(turntableBox).getPropertyValue('--shrink-duration')) || 4;
+          const shrinkMs = Math.round(shrinkSec * 1000);
 
-          cakeStage.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
-          cakeStage.style.opacity = '1';
-          cakeStage.style.transform = 'translateY(0)';
-        }, 5000);
+          turntableBox.addEventListener('transitionend', (ev) => {
+            if (ev.propertyName === 'top' || ev.propertyName === 'width' || ev.propertyName === 'transform') {
+              triggerCakeStage();
+            }
+          });
+          setTimeout(triggerCakeStage, shrinkMs + 50);
+        }, 2000);
       }
 
       function toggleTurntableMusic(e) {
